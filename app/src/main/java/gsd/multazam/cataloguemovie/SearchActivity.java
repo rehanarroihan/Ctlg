@@ -43,7 +43,7 @@ public class SearchActivity extends AppCompatActivity implements MovieAdapter.IM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        setTitle("Search Movie");
+        setTitle(getResources().getString(R.string.search_movie));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         pb = findViewById(R.id.progressBar);

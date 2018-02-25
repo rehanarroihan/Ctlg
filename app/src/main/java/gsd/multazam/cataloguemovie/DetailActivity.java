@@ -36,10 +36,10 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvLang = findViewById(R.id.textViewDetailLang);
         TextView tvPop = findViewById(R.id.textViewDetailPop);
         TextView tvVote = findViewById(R.id.textViewDetailVote);
-        tvTitle.setText(Html.fromHtml("<b>Title : </b>" + mov.getTitle()));
-        tvLang.setText(Html.fromHtml("<b>Language : </b>" + mov.getLanguage()));
-        tvPop.setText(Html.fromHtml("<b>Popularity : </b>" + mov.getPopularity()));
-        tvVote.setText(Html.fromHtml("<b>Vote Average : </b>" + mov.getVoteavg()));
+        tvTitle.setText(Html.fromHtml("<b>" + getResources().getString(R.string.title) + " : </b>" + mov.getTitle()));
+        tvLang.setText(Html.fromHtml("<b>" + getResources().getString(R.string.language) + " : </b>" + mov.getLanguage()));
+        tvPop.setText(Html.fromHtml("<b>" + getResources().getString(R.string.popularity) + " : </b>" + mov.getPopularity()));
+        tvVote.setText(Html.fromHtml("<b>" + getResources().getString(R.string.vote) + " : </b>" + mov.getVoteavg()));
     }
 
     @Override
