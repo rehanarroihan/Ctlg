@@ -1,4 +1,4 @@
-package gsd.multazam.cataloguemovie;
+package gsd.multazam.cataloguemovie.util;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
+import gsd.multazam.cataloguemovie.SearchActivity;
 import gsd.multazam.cataloguemovie.model.Movie;
 
 /**
@@ -20,7 +21,6 @@ import gsd.multazam.cataloguemovie.model.Movie;
  */
 
 public class LoadMovie extends AsyncTaskLoader<ArrayList<Movie>> {
-    private static final String API_KEY = "d4bee1442fda04e0b421566f1a54e4ae";
     private ArrayList<Movie> mList;
     private boolean result = false;
     private String search;
@@ -61,8 +61,8 @@ public class LoadMovie extends AsyncTaskLoader<ArrayList<Movie>> {
     public ArrayList<Movie> loadInBackground() {
         SyncHttpClient client = new SyncHttpClient();
 
-        final ArrayList<Movie> movies = new ArrayList<>();
-        String url = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY
+        mList = new ArrayList<>();
+        String url = "https://api.themoviedb.org/3/search/movie?api_key=" + SearchActivity.API_KEY
                 + "&language=en-US&query=" + search;
 
         client.get(url, new AsyncHttpResponseHandler() {
@@ -80,9 +80,17 @@ public class LoadMovie extends AsyncTaskLoader<ArrayList<Movie>> {
                     JSONArray results = responseObject.getJSONArray("results");
                     Log.d("Response", "onSuccess: " + result.toString());
                     for (int i = 0; i < results.length(); i++) {
-                        JSONObject mov = results.getJSONObject(i);
-                        Movie movie = new Movie(mov);
-                        movies.add(movie);
+                        JSONObject data = results.getJSONObject(i);
+                        Movie mo = new Movie();
+                        mo.setId(data.getInt("id"));
+                        mo.setVoteavg(data.getString("vote_average"));
+                        mo.setLanguage(data.getString("original_language"));
+                        mo.setPopularity(data.getString("popularity"));
+                        mo.setTitle(data.getString("title"));
+                        mo.setOverview(data.getString("overview"));
+                        mo.setRelease_date(data.getString("release_date"));
+                        mo.setPoster(data.getString("poster_path"));
+                        mList.add(mo);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -93,8 +101,7 @@ public class LoadMovie extends AsyncTaskLoader<ArrayList<Movie>> {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             }
         });
-
-        return movies;
+        return mList;
     }
 
     protected void onReleaseResources(ArrayList<Movie> data) {

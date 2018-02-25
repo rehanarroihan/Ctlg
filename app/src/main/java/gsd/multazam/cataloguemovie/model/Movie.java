@@ -1,12 +1,12 @@
 package gsd.multazam.cataloguemovie.model;
 
-import org.json.JSONObject;
+import java.io.Serializable;
 
 /**
- * Created by rehan on 21/02/18.
+ * Created by rehan on 25/02/18.
  */
 
-public class Movie {
+public class Movie implements Serializable {
     private int id;
     private String voteavg;
     private String language;
@@ -16,29 +16,18 @@ public class Movie {
     private String release_date;
     private String poster;
 
-    public Movie(JSONObject object) {
-        try {
-            int id = object.getInt("id");
-            String voteavg = object.getString("vote_average");
-            String language = object.getString("original_language");
-            String popularity = object.getString("popularity");
-            String poster = object.getString("poster_path");
-            String title = object.getString("title");
-            String overview = object.getString("overview");
-            String release_date = object.getString("release_date");
+    public Movie() {
+    }
 
-            this.id = id;
-            this.voteavg = voteavg;
-            this.language = language;
-            this.popularity = popularity;
-            this.poster = poster;
-            this.title = title;
-            this.overview = overview;
-            this.release_date = release_date;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Movie(int id, String voteavg, String language, String popularity, String title, String overview, String release_date, String poster) {
+        this.id = id;
+        this.voteavg = voteavg;
+        this.language = language;
+        this.popularity = popularity;
+        this.title = title;
+        this.overview = overview;
+        this.release_date = release_date;
+        this.poster = poster;
     }
 
     public int getId() {
@@ -49,12 +38,28 @@ public class Movie {
         this.id = id;
     }
 
-    public String getPoster() {
-        return poster;
+    public String getVoteavg() {
+        return voteavg;
     }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
+    public void setVoteavg(String voteavg) {
+        this.voteavg = voteavg;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(String popularity) {
+        this.popularity = popularity;
     }
 
     public String getTitle() {
@@ -81,27 +86,11 @@ public class Movie {
         this.release_date = release_date;
     }
 
-    public String getVoteavg() {
-        return voteavg;
+    public String getPoster() {
+        return poster;
     }
 
-    public void setVoteavg(String voteavg) {
-        this.voteavg = voteavg;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(String popularity) {
-        this.popularity = popularity;
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
 }

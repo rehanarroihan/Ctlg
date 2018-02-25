@@ -1,101 +1,104 @@
 package gsd.multazam.cataloguemovie;
 
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import java.util.ArrayList;
+import gsd.multazam.cataloguemovie.fragment.PlayingFragment;
+import gsd.multazam.cataloguemovie.fragment.UpcomingFragment;
 
-import gsd.multazam.cataloguemovie.adapter.MovieAdapter;
-import gsd.multazam.cataloguemovie.model.Movie;
-
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
-    static final String EXTRAS_FILM = "EXTRAS_FILM";
-    private static final String TAG = "MainActivity";
-    ListView lv;
-    ProgressBar pb;
-    MovieAdapter mAdapter;
-    EditText etMovie;
-    Button btCari;
-    ArrayList<Movie> mList = new ArrayList<>();
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setTitle("Movie Catalogue");
+        setContentView(R.layout.activity_major);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mAdapter = new MovieAdapter(this);
-        mAdapter.notifyDataSetChanged();
-
-        pb = findViewById(R.id.progressBar);
-        lv = findViewById(R.id.listView);
-        lv.setAdapter(mAdapter);
-        etMovie = findViewById(R.id.editTextSearch);
-        btCari = findViewById(R.id.buttonSearch);
-        btCari.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String film = etMovie.getText().toString();
-                if (TextUtils.isEmpty(film)) return;
-                Bundle bundle = new Bundle();
-                bundle.putString(EXTRAS_FILM, film);
-                lv.setVisibility(View.GONE);
-                pb.setVisibility(View.VISIBLE);
-                getLoaderManager().restartLoader(0, bundle, MainActivity.this);
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
-        String film = etMovie.getText().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString(EXTRAS_FILM, film);
-        getLoaderManager().initLoader(0, bundle, this);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Intent i = new Intent(MainActivity.this, DetailActivity.class);
-                i.putExtra(DetailActivity.TITLE_EXTRA, mList.get(pos).getTitle());
-                i.putExtra(DetailActivity.IMG_EXTRA, mList.get(pos).getPoster());
-                i.putExtra(DetailActivity.DESC_EXTRA, mList.get(pos).getOverview());
-                i.putExtra(DetailActivity.POP_EXTRA, mList.get(pos).getPopularity());
-                i.putExtra(DetailActivity.VOTE_EXTRA, mList.get(pos).getVoteavg());
-                i.putExtra(DetailActivity.LANG_EXTRA, mList.get(pos).getLanguage());
-                startActivity(i);
-            }
-        });
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        changePage(R.id.nav_now);
+        navigationView.setCheckedItem(R.id.nav_now);
     }
 
     @Override
-    public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
-        String query = "";
-        if (args != null) {
-            query = args.getString(EXTRAS_FILM);
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-        return new LoadMovie(this, query);
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        lv.setVisibility(View.VISIBLE);
-        pb.setVisibility(View.GONE);
-        mList = data;
-        mAdapter.setData(data);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.major, menu);
+        return true;
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        lv.setVisibility(View.GONE);
-        pb.setVisibility(View.VISIBLE);
-        mAdapter.setData(null);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        changePage(id);
+        return true;
+    }
+
+    private void changePage(int id) {
+        Fragment fragment = null;
+        if (id == R.id.nav_now) {
+            fragment = new PlayingFragment();
+            setTitle("Playing Movie");
+        } else if (id == R.id.nav_soon) {
+            fragment = new UpcomingFragment();
+            setTitle("Coming Soon");
+        } else if (id == R.id.nav_search) {
+            fragment = new PlayingFragment();
+            setTitle("Playing Movie");
+            startActivity(new Intent(MainActivity.this, SearchActivity.class));
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commitNow();
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 }
