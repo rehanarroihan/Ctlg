@@ -28,15 +28,15 @@ import java.util.ArrayList;
 import gsd.multazam.cataloguemovie.DetailActivity;
 import gsd.multazam.cataloguemovie.R;
 import gsd.multazam.cataloguemovie.SearchActivity;
-import gsd.multazam.cataloguemovie.adapter.MovsAdapter;
+import gsd.multazam.cataloguemovie.adapter.MovieAdapter;
 import gsd.multazam.cataloguemovie.model.Movie;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UpcomingFragment extends Fragment implements MovsAdapter.IMovieAdapter {
+public class UpcomingFragment extends Fragment implements MovieAdapter.IMovieAdapter {
     ArrayList<Movie> mList = new ArrayList<>();
-    MovsAdapter mAdapter;
+    MovieAdapter mAdapter;
 
     public UpcomingFragment() {
         // Required empty public constructor
@@ -85,7 +85,7 @@ public class UpcomingFragment extends Fragment implements MovsAdapter.IMovieAdap
 
                         RecyclerView recyclerView = getView().findViewById(R.id.recyclerViewSoons);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        mAdapter = new MovsAdapter(getContext(), mList, UpcomingFragment.this);
+                        mAdapter = new MovieAdapter(getContext(), mList, UpcomingFragment.this);
                         recyclerView.setAdapter(mAdapter);
                     }
                 }, new Response.ErrorListener() {

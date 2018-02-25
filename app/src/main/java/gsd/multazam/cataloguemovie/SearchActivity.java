@@ -1,106 +1,103 @@
 package gsd.multazam.cataloguemovie;
 
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import gsd.multazam.cataloguemovie.adapter.MovieAdapter;
 import gsd.multazam.cataloguemovie.model.Movie;
-import gsd.multazam.cataloguemovie.util.LoadMovie;
 
-public class SearchActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+public class SearchActivity extends AppCompatActivity implements MovieAdapter.IMovieAdapter {
     public static final String API_KEY = "d4bee1442fda04e0b421566f1a54e4ae";
-    static final String EXTRAS_FILM = "EXTRAS_FILM";
-    private static final String TAG = "SearchActivity";
-    ListView lv;
+    RecyclerView rv;
     ProgressBar pb;
     MovieAdapter mAdapter;
-    EditText etMovie;
-    Button btCari;
+    TextView tvMsg;
     ArrayList<Movie> mList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search);
         setTitle("Search Movie");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mAdapter = new MovieAdapter(this);
-        mAdapter.notifyDataSetChanged();
-
         pb = findViewById(R.id.progressBar);
-        lv = findViewById(R.id.listView);
-        lv.setAdapter(mAdapter);
-        etMovie = findViewById(R.id.editTextSearch);
-        btCari = findViewById(R.id.buttonSearch);
-        btCari.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String film = etMovie.getText().toString();
-                if (TextUtils.isEmpty(film)) return;
-                Bundle bundle = new Bundle();
-                bundle.putString(EXTRAS_FILM, film);
-                lv.setVisibility(View.GONE);
-                pb.setVisibility(View.VISIBLE);
-                getLoaderManager().restartLoader(0, bundle, SearchActivity.this);
-            }
-        });
-
-        String film = etMovie.getText().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString(EXTRAS_FILM, film);
-        getLoaderManager().initLoader(0, bundle, this);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Intent i = new Intent(SearchActivity.this, DetailActivity.class);
-                i.putExtra(DetailActivity.HOTEL, mList.get(pos));
-                startActivity(i);
-            }
-        });
+        rv = findViewById(R.id.recyclerViewSearch);
+        tvMsg = findViewById(R.id.textViewMsg);
     }
 
-    @Override
-    public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
-        String query = "";
-        if (args != null) {
-            query = args.getString(EXTRAS_FILM);
-        }
-        return new LoadMovie(this, query);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        lv.setVisibility(View.VISIBLE);
-        pb.setVisibility(View.GONE);
-        mList = data;
-        mAdapter.setData(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        lv.setVisibility(View.GONE);
+    private void searchMovie(String query) {
+        rv.setVisibility(View.GONE);
         pb.setVisibility(View.VISIBLE);
-        mAdapter.setData(null);
+        tvMsg.setVisibility(View.GONE);
+        mList.clear();
+        RequestQueue rq = Volley.newRequestQueue(this);
+        String url = "https://api.themoviedb.org/3/search/movie?api_key=" + SearchActivity.API_KEY
+                + "&language=en-US&query=" + query;
+        JsonObjectRequest reqData = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley", "Response : " + response);
+                        try {
+                            JSONArray result = response.getJSONArray("results");
+                            for (int i = 0; i < result.length(); i++) {
+                                JSONObject data = result.getJSONObject(i);
+                                Movie mo = new Movie();
+                                mo.setId(data.getInt("id"));
+                                mo.setVoteavg(data.getString("vote_average"));
+                                mo.setLanguage(data.getString("original_language"));
+                                mo.setPopularity(data.getString("popularity"));
+                                mo.setTitle(data.getString("title"));
+                                mo.setOverview(data.getString("overview"));
+                                mo.setRelease_date(data.getString("release_date"));
+                                mo.setPoster(data.getString("poster_path"));
+                                mList.add(mo);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        rv.setVisibility(View.VISIBLE);
+                        tvMsg.setVisibility(View.GONE);
+                        pb.setVisibility(View.GONE);
+                        RecyclerView recyclerView = findViewById(R.id.recyclerViewSearch);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+                        mAdapter = new MovieAdapter(SearchActivity.this, mList, SearchActivity.this);
+                        recyclerView.setAdapter(mAdapter);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        rq.add(reqData);
     }
 
     @Override
@@ -108,13 +105,15 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.option_menu, menu);
 
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(SearchActivity.this, query, Toast.LENGTH_SHORT).show();
+                rv.setVisibility(View.GONE);
+                tvMsg.setVisibility(View.VISIBLE);
+                pb.setVisibility(View.VISIBLE);
+                searchMovie(query);
                 return true;
             }
 
@@ -135,5 +134,12 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void doClick(int pos) {
+        Intent i = new Intent(this, DetailActivity.class);
+        i.putExtra(DetailActivity.HOTEL, mList.get(pos));
+        startActivity(i);
     }
 }

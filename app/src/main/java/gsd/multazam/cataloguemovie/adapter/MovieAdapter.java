@@ -1,10 +1,10 @@
 package gsd.multazam.cataloguemovie.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,87 +16,68 @@ import gsd.multazam.cataloguemovie.R;
 import gsd.multazam.cataloguemovie.model.Movie;
 
 /**
- * Created by rehan on 21/02/18.
+ * Created by rehan on 25/02/18.
  */
 
-public class MovieAdapter extends BaseAdapter {
-    private ImageView poster;
-    private ArrayList<Movie> mData = new ArrayList<>();
-    private LayoutInflater mInflater;
-    private Context context;
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
+    public static final String IMAGE_URL_BASE_PATH = "http://image.tmdb.org/t/p/w500";
+    ArrayList<Movie> list;
+    Context context;
+    IMovieAdapter iMovieAdapter;
 
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, ArrayList<Movie> list, IMovieAdapter iMovieAdapter) {
+        this.list = list;
         this.context = context;
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public void setData(ArrayList<Movie> items) {
-        mData = items;
-        notifyDataSetChanged();
-    }
-
-    public void addItem(final Movie item) {
-        mData.add(item);
-        notifyDataSetChanged();
-    }
-
-    public void clearData() {
-        mData.clear();
+        this.iMovieAdapter = iMovieAdapter;
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.movie_row, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final Movie mov = list.get(position);
+        holder.tvName.setText(mov.getTitle());
+        holder.tvDesc.setText(mov.getOverview());
+        holder.tvDate.setText(mov.getRelease_date());
+        Glide.with(context)
+                .load(IMAGE_URL_BASE_PATH + mov.getPoster())
+                .into(holder.ivPoster);
+    }
+
+    @Override
+    public int getItemCount() {
+        if (list != null)
+            return list.size();
         return 0;
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return 1;
+    public interface IMovieAdapter {
+        void doClick(int pos);
     }
 
-    @Override
-    public int getCount() {
-        if (mData == null) return 0;
-        return mData.size();
-    }
-
-    @Override
-    public Movie getItem(int position) {
-        return mData.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.movie_row, null);
-            holder.tvTitle = convertView.findViewById(R.id.textViewName);
-            holder.ivPoster = convertView.findViewById(R.id.imageView);
-            holder.tvDesc = convertView.findViewById(R.id.textViewDesc);
-            holder.tvDate = convertView.findViewById(R.id.textViewDate);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        Glide.with(context).load("https://image.tmdb.org/t/p/w185" + mData.get(position).getPoster())
-                .into(holder.ivPoster);
-        holder.tvTitle.setText(mData.get(position).getTitle());
-        holder.tvDesc.setText(mData.get(position).getOverview());
-        holder.tvDate.setText(mData.get(position).getRelease_date());
-        return convertView;
-    }
-
-    public static class ViewHolder {
-        TextView tvTitle;
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPoster;
-        TextView tvDesc;
-        TextView tvDate;
+        TextView tvName;
+        TextView tvDesc, tvDate;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.textViewName);
+            tvDesc = itemView.findViewById(R.id.textViewDesc);
+            tvDate = itemView.findViewById(R.id.textViewDate);
+            ivPoster = itemView.findViewById(R.id.imageView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    iMovieAdapter.doClick(getAdapterPosition());
+                }
+            });
+        }
     }
 }
