@@ -20,4 +20,8 @@
     <string name="language">Language</string>
     <string name="popularity">Popularity</string>
     <string name="vote">Vote Average</string>
+    <string name="lorem">lorem</string>
+    <string name="favorite">Favorite</string>
+    <string name="dofavorite">Add to Favorite</string>
+    <string name="delFav">Deleted from Favorite</string>
 </resources>

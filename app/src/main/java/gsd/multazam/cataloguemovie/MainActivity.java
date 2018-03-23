@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import gsd.multazam.cataloguemovie.fragment.FavoriteFragment;
 import gsd.multazam.cataloguemovie.fragment.PlayingFragment;
 import gsd.multazam.cataloguemovie.fragment.UpcomingFragment;
 
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity
             setTitle(getResources().getString(R.string.now_playing));
             Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
             startActivity(mIntent);
+        } else if (id == R.id.nav_fav) {
+            fragment = new FavoriteFragment();
+            setTitle(getResources().getString(R.string.favorite));
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commitNow();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
