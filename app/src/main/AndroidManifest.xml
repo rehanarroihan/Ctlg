@@ -25,6 +25,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -39,6 +40,21 @@
             android:exported="true"
             android:readPermission="gsd.multazam.cataloguemovie.READ_DATABASE"
             android:writePermission="gsd.multazam.cataloguemovie.WRITE_DATABASE" />
+
+        <receiver android:name=".widget.MovieWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/movie_widget_info" />
+        </receiver>
+
+        <service
+            android:name="gsd.multazam.cataloguemovie.widget.MovieWidgetService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

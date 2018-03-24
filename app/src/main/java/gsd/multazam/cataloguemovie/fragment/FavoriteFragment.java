@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import gsd.multazam.cataloguemovie.R;
 import gsd.multazam.cataloguemovie.adapter.FavoriteAdapter;
+import gsd.multazam.cataloguemovie.model.Favorite;
 
 import static gsd.multazam.cataloguemovie.db.DatabaseContract.CONTENT_URI;
 
@@ -51,6 +52,13 @@ public class FavoriteFragment extends Fragment implements FavoriteAdapter.IFavoA
     @Override
     public void doClick(int pos) {
 
+    }
+
+    private Favorite getItem(int position) {
+        if (!list.moveToPosition(position)) {
+            throw new IllegalStateException("Position invalid");
+        }
+        return new Favorite(list);
     }
 
     private class LoadFavMov extends AsyncTask<Void, Void, Cursor> {

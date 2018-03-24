@@ -65,7 +65,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         ImageView ivPoster;
         TextView tvName;
         TextView tvDesc, tvDate;
-        ImageView ivFav;
 
         public ViewHolder(View itemView) {
             super(itemView);

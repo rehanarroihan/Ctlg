@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,6 +38,7 @@ import gsd.multazam.cataloguemovie.model.Movie;
 public class UpcomingFragment extends Fragment implements MovieAdapter.IMovieAdapter {
     ArrayList<Movie> mList = new ArrayList<>();
     MovieAdapter mAdapter;
+    private SwipeRefreshLayout swipe;
 
     public UpcomingFragment() {
         // Required empty public constructor
@@ -52,10 +54,24 @@ public class UpcomingFragment extends Fragment implements MovieAdapter.IMovieAda
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadData();
+        swipe = getView().findViewById(R.id.swipeLayoutSoon);
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
+        swipe.post(new Runnable() {
+            @Override
+            public void run() {
+                swipe.setRefreshing(true);
+                loadData();
+            }
+        });
     }
 
     private void loadData() {
+        swipe.setRefreshing(true);
         mList.clear();
         RequestQueue rq = Volley.newRequestQueue(getContext());
         String url = "https://api.themoviedb.org/3/movie/upcoming?api_key=" + SearchActivity.API_KEY + "&language=en-US";
@@ -87,11 +103,12 @@ public class UpcomingFragment extends Fragment implements MovieAdapter.IMovieAda
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         mAdapter = new MovieAdapter(getContext(), mList, UpcomingFragment.this);
                         recyclerView.setAdapter(mAdapter);
+                        swipe.setRefreshing(false);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                swipe.setRefreshing(false);
             }
         });
         rq.add(reqData);
