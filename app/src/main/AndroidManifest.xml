@@ -34,6 +34,21 @@
             android:label="@string/title_activity_det"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <receiver
+            android:name=".util.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".util.SchedulerService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name=".provider.MovieProvider"
             android:authorities="gsd.multazam.cataloguemovie"
@@ -45,16 +60,19 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/movie_widget_info" />
         </receiver>
 
         <service
-            android:name="gsd.multazam.cataloguemovie.widget.MovieWidgetService"
+            android:name=".widget.MovieWidgetService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".SettingActivity"></activity>
     </application>
 
 </manifest>

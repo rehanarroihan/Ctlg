@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import gsd.multazam.cataloguemovie.db.DatabaseContract;
-import gsd.multazam.cataloguemovie.model.Favorite;
 import gsd.multazam.cataloguemovie.model.Movie;
 
 import static android.provider.BaseColumns._ID;
@@ -31,11 +30,10 @@ import static gsd.multazam.cataloguemovie.db.DatabaseContract.FavColumns.TITLE;
 import static gsd.multazam.cataloguemovie.db.DatabaseContract.FavColumns.VOTE;
 
 public class DetailActivity extends AppCompatActivity {
-    public static final String HOTEL = "hotel";
+    public static final String MOVIE = "movie";
     private static final String TAG = "DetailActivity";
     private boolean isFav = false;
     private Movie mov;
-    private Favorite fav;
     private ImageView ivFavorite;
 
     @Override
@@ -45,10 +43,7 @@ public class DetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (mov == null) {
-
-        }
-        mov = (Movie) getIntent().getSerializableExtra(HOTEL);
+        mov = getIntent().getParcelableExtra(MOVIE);
         setTitle(mov.getTitle());
         Log.d(TAG, "onCreate: id film : " + mov.getId());
 

@@ -117,7 +117,7 @@ public class UpcomingFragment extends Fragment implements MovieAdapter.IMovieAda
     @Override
     public void doClick(int pos) {
         Intent i = new Intent(getActivity(), DetailActivity.class);
-        i.putExtra(DetailActivity.HOTEL, mList.get(pos));
+        i.putExtra(DetailActivity.MOVIE, mList.get(pos));
         startActivity(i);
     }
 }

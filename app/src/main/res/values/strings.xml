@@ -26,4 +26,15 @@
     <string name="delFav">Deleted from Favorite</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="err_load_failed">Gagal mengambil data dari server</string>
+    <string name="key_reminder_daily">reminder_daily</string>
+    <string name="label_daily_reminder_title">Daily Reminder Notification</string>
+    <string name="key_reminder_upcoming">reminder_upcoming</string>
+    <string name="label_daily_reminder_summary">Turn on/off daily reminder notification</string>
+    <string name="label_upcoming_reminder_summary">Turn on/off daily reminder notification</string>
+    <string name="label_upcoming_reminder_title">Upcoming Reminder Notification</string>
+    <string name="key_setting_locale">settting_locate</string>
+    <string name="label_setting_locale_title">App Localization</string>
+    <string name="label_setting_locale_summary">Change Localization</string>
+    <string name="action_notification">Notification</string>
 </resources>

@@ -21,9 +21,9 @@
             android:icon="@drawable/ic_star_black_24dp"
             android:title="@string/favorite" />
         <item
-            android:id="@+id/nav_lang"
-            android:icon="@drawable/ic_flag_black_24dp"
-            android:title="@string/change_lang" />
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/action_settings" />
     </group>
 
 </menu>

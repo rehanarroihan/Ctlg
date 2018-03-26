@@ -2,7 +2,6 @@ package gsd.multazam.cataloguemovie;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -69,11 +68,10 @@ public class MainActivity extends AppCompatActivity
             fragment = new PlayingFragment();
             setTitle(getResources().getString(R.string.now_playing));
             startActivity(new Intent(MainActivity.this, SearchActivity.class));
-        } else if (id == R.id.nav_lang) {
+        } else if (id == R.id.nav_setting) {
             fragment = new PlayingFragment();
             setTitle(getResources().getString(R.string.now_playing));
-            Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-            startActivity(mIntent);
+            startActivity(new Intent(MainActivity.this, SettingActivity.class));
         } else if (id == R.id.nav_fav) {
             fragment = new FavoriteFragment();
             setTitle(getResources().getString(R.string.favorite));

@@ -139,7 +139,7 @@ public class SearchActivity extends AppCompatActivity implements MovieAdapter.IM
     @Override
     public void doClick(int pos) {
         Intent i = new Intent(this, DetailActivity.class);
-        i.putExtra(DetailActivity.HOTEL, mList.get(pos));
+        i.putExtra(DetailActivity.MOVIE, mList.get(pos));
         startActivity(i);
     }
 }
